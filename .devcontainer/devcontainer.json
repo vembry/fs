@@ -2,9 +2,10 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
 	"name": "fs",
-	"image": "mcr.microsoft.com/devcontainers/base:trixie",
+	"image": "mcr.microsoft.com/devcontainers/base:bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/go:1": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
 		"ghcr.io/devcontainers/features/node:2": {}
 	},
 	"mounts": [
@@ -20,6 +21,5 @@
 			]
 		}
 	},
-
 	"remoteUser": "root"
 }
