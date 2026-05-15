@@ -1,0 +1,30 @@
+services:
+  api:
+    build: ./api
+    develop:
+      watch:
+        - action: rebuild
+          path: ./api
+    image: api:local
+    command: /api
+    ports:
+      - "80:80"
+    
+  web:
+    build: 
+      context: ./web
+      target: dev
+    develop:
+      watch:
+        - action: sync
+          path: ./web
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./web/package.json
+        - action: rebuild
+          path: ./web/package-lock.json
+    image: web:local
+    ports:
+      - "3000:3000"
