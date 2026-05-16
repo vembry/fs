@@ -1,7 +1,7 @@
 services:
   api:
     build: ./api
-    pull_policy: rebuild
+    pull_policy: build
     develop:
       watch:
         - action: rebuild
@@ -11,13 +11,13 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "./sample directory:/mounts/sample directory/"
-    
+      - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory"
+
   web:
-    build: 
+    build:
       context: ./web
       target: dev
-    pull_policy: rebuild
+    pull_policy: build
     develop:
       watch:
         - action: sync
