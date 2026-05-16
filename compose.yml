@@ -1,6 +1,7 @@
 services:
   api:
     build: ./api
+    pull_policy: rebuild
     develop:
       watch:
         - action: rebuild
@@ -9,11 +10,14 @@ services:
     command: /api
     ports:
       - "80:80"
+    volumes:
+      - "./sample directory:/mounts/sample directory/"
     
   web:
     build: 
       context: ./web
       target: dev
+    pull_policy: rebuild
     develop:
       watch:
         - action: sync
