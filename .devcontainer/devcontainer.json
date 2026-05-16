@@ -17,7 +17,8 @@
 				"esbenp.prettier-vscode",
 				"mhutchie.git-graph",
 				"donjayamanne.githistory",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"svelte.svelte-vscode"
 			]
 		}
 	},
