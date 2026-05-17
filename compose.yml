@@ -10,6 +10,8 @@ services:
     command: /api
     volumes:
       - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory"
+      - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory2"
+      - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory3"
 
   ui:
     image: ui:local
