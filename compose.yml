@@ -13,22 +13,22 @@ services:
     volumes:
       - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory"
 
-  web:
+  ui:
     build:
-      context: ./web
+      context: ./ui
       target: dev
     pull_policy: build
     develop:
       watch:
         - action: sync
-          path: ./web
+          path: ./ui
           target: /app
           ignore:
             - node_modules/
         - action: rebuild
-          path: ./web/package.json
+          path: ./ui/package.json
         - action: rebuild
-          path: ./web/package-lock.json
-    image: web:local
+          path: ./ui/package-lock.json
+    image: ui:local
     ports:
       - "3000:3000"
