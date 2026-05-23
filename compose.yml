@@ -7,8 +7,14 @@ services:
       watch:
         - action: rebuild
           path: ./api
+          ignore: 
+            - "sqlc/"
+            - "sqlite/"
+            - "*.yaml"
+            - "*.sql"
     command: /api
     volumes:
+      - "${LOCAL_WORKSPACE_FOLDER:-.}/api/sqlite/actual/fs.db:/db/fs.db"
       - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory"
       - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory2"
       - "${LOCAL_WORKSPACE_FOLDER:-.}/sample directory:/mounts/sample directory3"
