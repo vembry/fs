@@ -26,5 +26,8 @@
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
     "LOCAL_HOME": "${localEnv:HOME}"
   },
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "postCreateCommand": {
+    "install-sqlc": "go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest"
+  }
 }
