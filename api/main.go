@@ -1,82 +1,51 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"api/internal/app"
+	"api/pkg/db"
+	_ "embed"
 	"log"
-	"net/http"
 	"os"
-	"strings"
+	"os/signal"
+	"syscall"
 )
 
-type PathEntry struct {
-	Path        string `json:"path"`
-	IsDirectory bool   `json:"is_directory"`
-}
+//go:embed sqlc/schema.sql
+var sqliteDdlSchema string
 
 func main() {
-	mux := http.NewServeMux()
+	// initiate dependencies
+	appDb := app.NewDb(sqliteDdlSchema)
+	defer appDb.Close()
 
-	// handler
-	mux.HandleFunc("GET /test", func(w http.ResponseWriter, r *http.Request) {
-		raw, _ := json.Marshal(map[string]interface{}{
-			"message": "ok",
-		})
-		w.WriteHeader(http.StatusOK)
-		w.Write(raw)
-	})
+	sqlcClient := db.New(appDb)
 
-	mux.HandleFunc("GET /f", func(w http.ResponseWriter, r *http.Request) {
-		pathQuery := r.URL.Query().Get("d")
+	// construct http-server
+	hs := newHttpServer(sqlcClient)
 
-		fullPath := "/mounts"
-		paths := []string{}
-		if len(strings.TrimSpace(pathQuery)) > 0 {
-			fullPath = fmt.Sprintf("%s/%s", fullPath, pathQuery)
-			paths = strings.Split(pathQuery, "/")
-		}
+	log.Printf("starting up server...")
+	hs.Start()
 
-		// browse directory
-		entries, err := os.ReadDir(fullPath)
-		if err != nil {
-			raw, _ := json.Marshal(map[string]interface{}{
-				"message": "failed to browse directory",
-				"error":   err.Error(),
-			})
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(raw)
-			return
-		}
+	// awaits for termination
+	WatchForExitSignal()
 
-		// construct response
-		entriesOut := []PathEntry{}
-		for _, entry := range entries {
-			entriesOut = append(entriesOut, PathEntry{
-				Path:        entry.Name(),
-				IsDirectory: entry.IsDir(),
-			})
-		}
-
-		raw, _ := json.Marshal(map[string]interface{}{
-			"paths":   paths,
-			"entries": entriesOut,
-		})
-
-		w.WriteHeader(http.StatusOK)
-		w.Write(raw)
-	})
-
-	// construct server
-	httpserver := http.Server{
-		Addr:    ":80",
-		Handler: mux,
-	}
-
-	log.SetOutput(os.Stdout)
-	log.Printf("starting server...")
-	// start server
-	if err := httpserver.ListenAndServe(); err != nil {
-		log.Fatalf("error on starting server. err=%v", err)
-	}
 	log.Printf("shutting down server...")
+	hs.Stop()
+
+}
+
+// WatchForExitSignal is to awaits incoming interrupt signal
+// sent to the service
+func WatchForExitSignal() os.Signal {
+	log.Printf("awaiting sigterm...")
+	ch := make(chan os.Signal, 4)
+	signal.Notify(
+		ch,
+		syscall.SIGINT,
+		syscall.SIGQUIT,
+		syscall.SIGTERM,
+		syscall.SIGTSTP,
+	)
+
+	return <-ch
 }
