@@ -10,8 +10,8 @@ import (
 )
 
 type Path struct {
-	ID          int64
-	Path        string
-	ParentID    sql.NullInt64
-	Information json.RawMessage
+	ID          int64           `json:"id"`
+	Path        string          `json:"path"`
+	ParentID    sql.NullInt64   `json:"parent_id"`
+	Information json.RawMessage `json:"information"`
 }

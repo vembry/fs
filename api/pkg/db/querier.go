@@ -9,6 +9,7 @@ import (
 )
 
 type Querier interface {
+	InsertPath(ctx context.Context, arg InsertPathParams) error
 	ListPaths(ctx context.Context) ([]Path, error)
 }
 

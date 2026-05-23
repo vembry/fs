@@ -7,7 +7,25 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 )
+
+const insertPath = `-- name: InsertPath :exec
+;
+
+INSERT INTO paths (path, information)
+VALUES(?, ?)
+`
+
+type InsertPathParams struct {
+	Path        string          `json:"path"`
+	Information json.RawMessage `json:"information"`
+}
+
+func (q *Queries) InsertPath(ctx context.Context, arg InsertPathParams) error {
+	_, err := q.db.ExecContext(ctx, insertPath, arg.Path, arg.Information)
+	return err
+}
 
 const listPaths = `-- name: ListPaths :many
 SELECT id, path, parent_id, information
